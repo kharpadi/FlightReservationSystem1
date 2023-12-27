@@ -1,0 +1,87 @@
+﻿@using FlightReservationSystem1.Areas.Identity.Data
+@model ApplicationUser
+
+<style>
+    .tickets-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+        justify-content: center;
+    }
+
+    .ticket {
+        background-color: #f9f9f9;
+        border-radius: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        width: 100%;
+        transition: transform 0.3s ease-in-out;
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+        .ticket:hover {
+            transform: scale(1.05);
+        }
+
+    .ticket-header {
+        background-color: #3498db;
+        color: #fff;
+        padding: 15px;
+        text-align: center;
+    }
+
+    .reservation-title {
+        text-align: center;
+        font-size: 24px; /* Yazı büyüklüğü */
+        color: #3498db; /* Yazı rengi */
+        margin-bottom: 20px; /* Yazı ile altındaki biletler arasına boşluk eklemek için */
+    }
+
+    .ticket-details {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .departure-time {
+        text-align: left;
+        margin-top: 10px;
+    }
+
+    .seat-number {
+        margin-top: 10px;
+    }
+
+    .delete-button {
+        background-color: #e74c3c;
+        color: #fff;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        display: block;
+        margin-top: 10px;
+    }
+</style>
+
+<h1 class="reservation-title">RESERVATIONS</h1>
+
+<div class="tickets-container">
+    @foreach (var rezervasyon in Model.Reservations)
+    {
+        <div class="ticket">
+            <div class="ticket-header">
+                <strong>Reservation ID: @rezervasyon.Id</strong>
+            </div>
+            <div class="ticket-details">
+                <p><strong>From:</strong> @rezervasyon.Schedule.Route.DepartureCity</p>
+                <p><strong>Where:</strong> @rezervasyon.Schedule.Route.ArrivalCity</p>
+                <p class="departure-time"><strong>Departure Time:</strong> @rezervasyon.Schedule.DepartureTime</p>
+                <p class="seat-number"><strong>Seat Number:</strong> @rezervasyon.SeatNumber</p>
+                <!-- Diğer özellikler buraya eklenebilir -->
+
+                <a href="@Url.Action("DeleteReservation", "ApplicationUser", new { id = rezervasyon.Id })" class="delete-button">Delete</a>
+            </div>
+        </div>
+    }
+</div>

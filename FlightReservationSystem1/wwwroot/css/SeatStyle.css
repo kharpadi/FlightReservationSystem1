@@ -1,0 +1,20 @@
+﻿/* Stil ayarlamaları */
+.seat-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.seat-checkbox {
+    width: 30px;
+    height: 30px;
+    margin-right: 5px;
+}
+
+.red {
+    background-color: red;
+}
+
+.green {
+    background-color: green;
+}
