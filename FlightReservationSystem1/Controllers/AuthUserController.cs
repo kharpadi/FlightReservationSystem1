@@ -1,18 +1,20 @@
 ﻿using FlightReservationSystem1.Areas.Identity.Data;
+using FlightReservationSystem1.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace FlightReservationSystem1.Controllers
 {
     [Authorize]
-    public class AuthUser : Controller
+    public class AuthUserController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        public AuthUser(UserManager<ApplicationUser> userManager, ApplicationDbContext context, SignInManager<ApplicationUser> signInManager)
+        public AuthUserController(UserManager<ApplicationUser> userManager, ApplicationDbContext context, SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _context = context;
@@ -21,11 +23,11 @@ namespace FlightReservationSystem1.Controllers
         }
         public IActionResult Index()
         {
-            return View();
+            return View();//
         }
 
         [Authorize] // Bu eyleme sadece giriş yapmış kullanıcılar erişebilir
-        public IActionResult UserProfile()
+        public IActionResult UserProfile()//
         {
             // Giriş yapmış kullanıcının Id'sini al
             var userId = _userManager.GetUserId(User);
@@ -90,7 +92,7 @@ namespace FlightReservationSystem1.Controllers
             _context.reservations.Remove(reservation);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("UserReservations", "ApplicationUser"); // Kullanıcının rezervasyonlarını görüntülediği sayfaya yönlendirme
+            return RedirectToAction("UserReservations", "AuthUser"); // Kullanıcının rezervasyonlarını görüntülediği sayfaya yönlendirme
         }
 
         [HttpPost]
@@ -110,7 +112,7 @@ namespace FlightReservationSystem1.Controllers
             {
                 await _signInManager.SignOutAsync(); // Kullanıcıyı oturumdan çıkart
 
-                return RedirectToAction("Index", "Home"); // İsterseniz başka bir sayfaya yönlendirebilirsiniz
+                return RedirectToAction("SearchFlights", "Home"); // İsterseniz başka bir sayfaya yönlendirebilirsiniz
             }
             else
             {
@@ -118,6 +120,56 @@ namespace FlightReservationSystem1.Controllers
                 ModelState.AddModelError(string.Empty, "Hesap silme işlemi başarısız oldu.");
                 return View(); // Hata durumunda kullanıcıyı aynı sayfada tutabilir veya başka bir sayfaya yönlendirebilirsiniz
             }
+        }
+
+        public IActionResult CreateReservation(Schedule schedule)
+        {
+            if(schedule == null)
+            {
+                return NotFound();
+            }
+            var reservedSeats = _context.reservations.Where(r => r.ScheduleId == schedule.Id).Select(r => r.SeatNumber).ToList();
+            var allSeats = Enumerable.Range(1, 60).Select(i => i.ToString()).ToList();
+
+            // Daha önce rezerve edilen koltukları dropdown listesinden çıkart
+            var availableSeats = allSeats.Except(reservedSeats).ToList();
+
+            ViewBag.Seats = new SelectList(availableSeats);
+
+            return View();
+            }
+
+        [HttpPost]
+        public IActionResult CreateReservation(string? selectedSeat, Schedule schedule)
+        {
+            if (string.IsNullOrEmpty(selectedSeat))
+            {
+                ModelState.AddModelError("selectedSeat", "Please select a seat.");
+                return View("CreateReservation");
+            }
+
+            // Kontrolü geçtikten sonra rezervasyonu oluştur
+            var reservation = new Reservation
+            {
+                UserId = _userManager.GetUserId(User), // Giriş yapan kullanıcının ID'sini alın
+                ScheduleId = schedule.Id,
+                SeatNumber = selectedSeat
+            };
+
+            _context.reservations.Add(reservation);
+            _context.SaveChanges();
+
+            // Daha önce rezerve edilen koltukları güncelle
+            var reservedSeats = _context.reservations.Where(r => r.ScheduleId == schedule.Id).Select(r => r.SeatNumber).ToList();
+            var allSeats = Enumerable.Range(1, 60).Select(i => i.ToString()).ToList();
+
+            // Daha önce rezerve edilen koltukları dropdown listesinden çıkart
+            var availableSeats = allSeats.Except(reservedSeats).ToList();
+
+            ViewBag.Seats = new SelectList(availableSeats);
+            TempData["SuccessMessage"] = "The ticket has been successfully added.";
+
+            return View("CreateReservation");
         }
 
     }

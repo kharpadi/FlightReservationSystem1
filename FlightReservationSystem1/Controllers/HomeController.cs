@@ -35,6 +35,7 @@ namespace FlightReservationSystem1.Controllers
         {
             // Seçilen tarihte ve şehirlerde olan uçuşları filtrele
             var flights = _context.schedules
+                .Include(s=>s.Plane)
                 .Include(s => s.Route)
                 .Where(s =>
                     s.Route.DepartureCity == DepartureCity &&

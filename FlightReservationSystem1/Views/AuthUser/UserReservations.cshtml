@@ -80,7 +80,7 @@
                 <p class="seat-number"><strong>Seat Number:</strong> @rezervasyon.SeatNumber</p>
                 <!-- Diğer özellikler buraya eklenebilir -->
 
-                <a href="@Url.Action("DeleteReservation", "ApplicationUser", new { id = rezervasyon.Id })" class="delete-button">Delete</a>
+                <a href="@Url.Action("DeleteReservation", "AuthUser", new { id = rezervasyon.Id })" class="delete-button">Delete</a>
             </div>
         </div>
     }

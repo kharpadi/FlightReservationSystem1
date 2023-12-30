@@ -1,0 +1,62 @@
+﻿@using FlightReservationSystem1.Areas.Identity.Data
+@model Reservation
+@{
+    ViewData["Title"] = "Seat Selection";
+}
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            // TempData'den gelen başarı mesajını kontrol et
+            var successMessage = '@TempData["SuccessMessage"]';
+            if (successMessage) {
+                alert(successMessage);
+            }
+        });
+    </script>
+}
+
+<h1>Seat Selection</h1>
+
+<form method="post" asp-controller="AuthUser" asp-action="CreateReservation">
+    <div class="form-group">
+        <label for="selectedSeat" class="control-label"></label>
+        @Html.DropDownList("selectedSeat", (SelectList)ViewBag.Seats, new { @class = "form-control" })
+    </div>
+    <button type="submit" class="btn btn-primary">Reserve Seat</button>
+</form>
+<style>
+    body {
+        background-color: #f4f4f4;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .container {
+        max-width: 400px;
+        margin: auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        margin-top: 50px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px;
+        margin-bottom: 15px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+</style>

@@ -60,7 +60,7 @@
                             <td>@ViewBag.DepartureCity</td>
                             <td>@ViewBag.ArrivalCity</td>
                             <td>@flight.DepartureTime.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td> <a asp-action="">Select Seat</a></td>
+                            <td> <a asp-controller="AuthUser" asp-action="CreateReservation" asp-route-id="@flight.Id">Select Seat</a></td>
                         </tr>
                     }
                 </tbody>
