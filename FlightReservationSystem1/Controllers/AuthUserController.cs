@@ -97,7 +97,7 @@ namespace FlightReservationSystem1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteAccount()
+        public async Task<IActionResult> DeleteAccount()//
         {
             var user = await _userManager.GetUserAsync(User);
 
